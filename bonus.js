@@ -9,8 +9,14 @@ console.log(gridDOMElement);
 const btnPlayDOMElement = document.getElementById('play-btn');
 console.log(btnPlayDOMElement);
 
+// - recupero in counter dal DOM
+let counterDOMElement = document.querySelector('.counter')
+console.log(counterDOMElement)
+console.log(counterDOMElement,'punti')
 
 
+
+let counter = 0
 
 
 btnPlayDOMElement.addEventListener('click', function(){    
@@ -18,54 +24,64 @@ btnPlayDOMElement.addEventListener('click', function(){
     const difficultyDOMElement = document.getElementById('difficulty');
     const value = difficultyDOMElement.options[difficultyDOMElement.selectedIndex].value;
     console.log(value);
-    
+    let numberOfCell 
+
     if (value ==='easy') {
-        gridGenerator(100, '')
+        numberOfCell = 100
+        gridGenerator(numberOfCell, '')
         gridDOMElement.classList.add('border-easy');
 
     } else if (value === 'normal') {
-        gridGenerator(81, 'medium-difficulty')
+        numberOfCell = 81
+        gridGenerator(numberOfCell, 'medium-difficulty')
         gridDOMElement.classList.add('border-normal');
     } else if (value === 'hard') {
-        gridGenerator(49, 'hard-difficulty')
+        numberOfCell = 49
+        gridGenerator(numberOfCell, 'hard-difficulty')
         gridDOMElement.classList.add('border-hard');
     }   
         
     // - recupero gli elementi generati precedentemente dal DOM 
     const gridItemDOMElements = document.querySelectorAll('.grid-item');
-    console.log(gridItemDOMElements);
-
+    
     // - creo un ciclo for per assegnare un evento click alla cella che vado a premere 
-    for (i = 0; i < gridItemDOMElements.length; i++) {
-
+    const bombs = getArrayOfRandomIntBetween(1,numberOfCell,16);
+    for (let i = 0; i < gridItemDOMElements.length; i++) {
+        
         const currentitemElements = gridItemDOMElements[i];
-        console.log(currentitemElements);
-        const bombs = getArrayOfRandomIntBetween(1,100,16);
-        console.log(bombs[i])
 
+        
+        
+                
         currentitemElements.addEventListener('click', function () {
+            const cellNumber = parseInt(currentitemElements.innerHTML)
+            if (bombs.includes(cellNumber)) {
 
-            if (currentitemElements.innerHTML.includes(bombs)) {
-
-                currentitemElements.classList.add('red-cell');
-
-            } else if (!currentitemElements.innerHTML.includes(bombs)) {
+                currentitemElements.classList.add('red-cell');                               
+                gridDOMElement.classList.add('end-game')
+                alert('Hai perso ' + (counterDOMElement.innerHTML = 'Hai totalizzato: ' + counter + ' Punti'))
+            } else {
 
                 currentitemElements.classList.add('cyan-cell');
+                counter++                
                 
+                counterDOMElement.innerHTML = 'Punti: ' + counter            
             }
 
-            console.log('ho cliccato sulla casella ' + currentitemElements.innerHTML);        
+            console.log('ho cliccato sulla casella ' + currentitemElements.innerHTML);                         
 
         })
 
-    }
+    }    
 })
 
 function gridGenerator(numCells, classCell) {
     const gridDOMElement = document.querySelector('.grid-container');
     gridDOMElement.innerHTML = '';
     gridDOMElement.classList.remove('border-grid', 'border-normal', 'border-hard'); 
+    gridDOMElement.classList.remove('end-game')
+    counter = 0 
+    counterDOMElement.innerHTML = '<div class="counter"></div>'   
       
 
     for (let i = 0; i < numCells; i++) {
@@ -90,7 +106,7 @@ function getArrayOfRandomIntBetween(min,max,number) {
         //generare numeri random che vanno da un minimo (min) ad un massimo (max)
        const n = getRandomIntInclusive(min,max)
        //Se n non è presente nell'array
-       console.log(bombsArray.includes(n), n)
+       console.log(n)
        if(bombsArray.includes(n) === false) {
            //pushare in numero nell'array
             bombsArray.push(n)
@@ -112,6 +128,3 @@ function getRandomIntInclusive(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
 }
-
-
-
